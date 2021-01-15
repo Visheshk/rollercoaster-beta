@@ -104,8 +104,9 @@ define( function( require ) {
 		return false;
 	}
 	// if snapTarget is intact
-	while( (i < trackLength ) && ( merges < maxMerges) )
-	{
+  //*********** maybe change maxMerge condition
+	// while( (i < trackLength ) && ( merges < maxMerges ) ) {
+  while( (i < trackLength ) ) {
 		track = tracks[i];
 		myPoints = [track.controlPoints[0], track.controlPoints[track.controlPoints.length - 1]];
 		if ( myPoints[0].snapTarget || myPoints[1].snapTarget ) 
@@ -116,18 +117,18 @@ define( function( require ) {
 				trackLength--;
 				i = 0;
 				tracks = model.getAllTracks();
-//				valueText.text = valueText.text + tracks[trackLength-1].trackName;
-			}
-			else if(model.joinTracks2(track))  // find the closest point if snapTarget exists but point shifted while merging some other track
-			{
+        //valueText.text = valueText.text + tracks[trackLength-1].trackName;
+      }
+      
+			else if(model.joinTracks2(track)) { // find the closest point if snapTarget exists but point shifted while merging some other track
 				merges++;
 				trackLength--;
 				i = 0;
 				tracks = model.getAllTracks();
-//				valueText.text = valueText.text + tracks[trackLength-1].trackName;
-			}
-			else //move on if snapping does not work
-			{
+        //valueText.text = valueText.text + tracks[trackLength-1].trackName;
+      }
+      
+			else { //move on if snapping does not work
 				i++;
 			}
 		}
@@ -143,8 +144,8 @@ define( function( require ) {
 	i=0;
 	tracks = model.getAllTracks();
 	trackLength = tracks.length;
-	while((i < trackLength )&&(merges < maxMerges))
-	{
+	// while((i < trackLength )&&(merges < maxMerges)) {
+  while (i < trackLength) {
 		t = tracks[i];
 		if(model.snapControlPoint(t))
 		{
@@ -154,13 +155,10 @@ define( function( require ) {
 			i = 0;
 			tracks = model.getAllTracks();
 //			valueText.text = valueText.text + tracks[trackLength-1].trackName;
-			continue;
-		}
-		i++;
+      continue;
+    }
+    i++;
   }
- 
-
-
 
 //	if(merges < maxMerges)
 	if(model.getAllTracks().length !==1 ) //make sure there is only one track
