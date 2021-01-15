@@ -88,156 +88,184 @@ var mergeTracks = function() {
   var tracks = model.getAllTracks();
     	//store the unmerged tracks
       //	model.previousTracks = tracks;
-      model.tracks.forEach( function(track) {
-       model.previousTracks.add(track);
-     } );
-      
-      var trackLength = tracks.length;
-      var maxMerges = tracks.length - 1;
-      var merges = 0, i = 0;
-      var track,t, myPoints;
-      valueText.text = "";
-      if(trackLength==0)
-      {
-        valueText.text = "Error ! No Track to simulate, add atleast one track ! ";
-        valueText.centerX = View.layoutBounds.centerX;
-        return false;
-      }
-    	// if snapTarget is intact
-      //*********** maybe change maxMerge condition
-    	// while( (i < trackLength ) && ( merges < maxMerges ) ) {
-        while( (i < trackLength ) ) {
-          track = tracks[i];
-          myPoints = [track.controlPoints[0], track.controlPoints[track.controlPoints.length - 1]];
-          if ( myPoints[0].snapTarget || myPoints[1].snapTarget ) 
-          {
-    			if(model.joinTracks(track)) //if snapTarget is intact
-    			{
-    				merges++;
-    				trackLength--;
-    				i = 0;
-    				tracks = model.getAllTracks();
-            //valueText.text = valueText.text + tracks[trackLength-1].trackName;
-          }
-          
-    			else if(model.joinTracks2(track)) { // find the closest point if snapTarget exists but point shifted while merging some other track
-    				merges++;
-    				trackLength--;
-    				i = 0;
-    				tracks = model.getAllTracks();
-            //valueText.text = valueText.text + tracks[trackLength-1].trackName;
-          }
-          
-    			else { //move on if snapping does not work
-    				i++;
-    			}
-    		}
-    		else 
-    		{
-    			i++;
-    		}
-    	}
-
-      //	valueText.text = valueText.text + "X";
-
-    	// unsnapped points
-    	i=0;
-    	tracks = model.getAllTracks();
-    	trackLength = tracks.length;
-    	// while((i < trackLength )&&(merges < maxMerges)) {
-        while (i < trackLength) {
-          t = tracks[i];
-          if(model.snapControlPoint(t))
-          {
-           model.joinTracks(t);
-           merges++;
-           trackLength--;
-           i = 0;
-           tracks = model.getAllTracks();
-    //			valueText.text = valueText.text + tracks[trackLength-1].trackName;
-    continue;
+  var resetTracks = function () {
+    model.tracks.clear();
+    model.previousTracks.forEach( function(track) {
+      track.interactive=true;
+      model.tracks.add(track);
+    });
+    model.previousTracks.clear();
+    model.mergedTrackCount = 0;
   }
-  i++;
-}
+  var getLeftX = function(track) {
+    var xs = [];
+    for (var c in track.controlPoints) {
+      xs.push(track.controlPoints[c].position.x);
+      // console.log(track.controlPoints[c].position);
+    }
+    // console.log(xs);
+    // console.log(Math.min(xs));
+    return Math.min(...xs);
+  }
+  var xDiffs = []
+  var leftXs = [];
+  model.tracks.forEach( function(track) {
+    model.previousTracks.add(track);
+    //given when new min X comes in, append to list od 
+    var newX = getLeftX(track);
+    console.log(newX);
+    for (var x in leftXs){
+      xDiffs.push(Math.abs(newX - leftXs[x]));  //find x difference between the new leftControlPoint and pre existing track's left points
+    }
+    console.log(xDiffs);
+    leftXs.push(newX); // append leftMost position of track's controlpoint to existing list of tracks
+  } );
 
-//	if(merges < maxMerges)
-	if(model.getAllTracks().length !==1 ) //make sure there is only one track
-	{
-
-		valueText.text = "Error ! Tracks must be kept closer to merge properly !" + model.getAllTracks().length.toFixed(0);
-   valueText.centerX = View.layoutBounds.centerX;
-   
-   model.tracks.clear();
-   model.previousTracks.forEach( function(track)
-   {
-     track.interactive=true;
-     model.tracks.add(track);
-   } );
-   model.previousTracks.clear();
-   model.mergedTrackCount = 0;
-  /*
-      for(var i=0;i<unmerged_tracks.length;i++)
-      {
-        var track=unmerged_tracks[i];
-        track.interactive=true;
-        model.tracks.add(track);
-      }
-      */
-
-      //Zhilin
-    // var n =0;
-    // var m =0;
-    // while( (n < trackLength ) )
-    // {
-    //   var t1 = tracks[n];
-    //   while((m > n ) && (m < trackLength)){
-    //     var t2 = tracks[m];
-    //     // calculate the overlap
-    //     valueText.text = "x value" + t1.x;
-    //     valueText.centerX = View.layoutBounds.centerX;
-    //     m++;
-    //   }
-    //   n++;
-    // }
-
-
+  if (Math.min(...xDiffs) < 1.5) {
+    valueText.text = "Tracks are overlapping! Move them to avoid issues";
+    valueText.centerX = View.layoutBounds.centerX;
+    resetTracks();
     return false;
   }
-  else
+  
+  var trackLength = tracks.length;
+  var maxMerges = tracks.length - 1;
+  var merges = 0, i = 0;
+  var track,t, myPoints;
+  valueText.text = "";
+  if(trackLength==0)
   {
-		//add flat portion of the track
-		var track  = model.getAllTracks();
-		var right = track[0].getRightControlPointXY();
-		model.tracks.add(model.flatTrack);
-		model.flatTrack.position = new Vector2(right.x,right.y);
-		model.flatTrack.updateLinSpace();
-		model.flatTrack.updateSplines();
-		model.flatTrack.trigger('scaled');
-		track[0].updateSplines();
-
-/*		var cps = track[0].controlPoints;
-		var x = cps[cps.length-1];
-		var dist = x.position.distance(model.flatTrack.controlPoints[0].position);
-		valueText.text = dist.toFixed(2);
-		valueText.centerX = View.layoutBounds.centerX;*/
-		
-		var track  = model.getAllTracks();
-		var tkNo = (track[1].trackName) == "Flat" ? 0:1;
-		var rCP = track[0].getRightControlPoint();
-		rCP.snapTarget = model.flatTrack.controlPoints[0];
-		if(model.joinTracks(track[0]))
-		{
+    valueText.text = "Error ! No Track to simulate, add atleast one track ! ";
+    valueText.centerX = View.layoutBounds.centerX;
+    return false;
+  }
+	// if snapTarget is intact
+  //*********** maybe change maxMerge condition
+	// while( (i < trackLength ) && ( merges < maxMerges ) ) {
+    while( (i < trackLength ) ) {
+      track = tracks[i];
+      myPoints = [track.controlPoints[0], track.controlPoints[track.controlPoints.length - 1]];
+      if ( myPoints[0].snapTarget || myPoints[1].snapTarget ) 
+      {
+			if(model.joinTracks(track)) //if snapTarget is intact
+			{
+				merges++;
+				trackLength--;
+				i = 0;
+				tracks = model.getAllTracks();
+        //valueText.text = valueText.text + tracks[trackLength-1].trackName;
+      }
+      
+			else if(model.joinTracks2(track)) { // find the closest point if snapTarget exists but point shifted while merging some other track
+				merges++;
+				trackLength--;
+				i = 0;
+				tracks = model.getAllTracks();
+        //valueText.text = valueText.text + tracks[trackLength-1].trackName;
+      }
+      
+			else { //move on if snapping does not work
+				i++;
+			}
 		}
-		track  = model.getAllTracks();
-		rCP = track[0].getRightControlPoint().sourcePosition;
-		wallImgNodeH.bottom = View.modelViewTransform.modelToViewY(rCP.y)+6;
-		wallImgNodeH.left = View.modelViewTransform.modelToViewX(rCP.x);
-		var adj = (model.skater.mass-40)/20*10;
-		wallImgNodeV.right = wallImgNodeH.right + adj;
-		wallImgNodeV.bottom = wallImgNodeH.bottom;
-		return true;
+		else 
+		{
+			i++;
+		}
 	}
-};
+
+  //	valueText.text = valueText.text + "X";
+
+	// unsnapped points
+	i=0;
+	tracks = model.getAllTracks();
+	trackLength = tracks.length;
+	// while((i < trackLength )&&(merges < maxMerges)) {
+    while (i < trackLength) {
+      t = tracks[i];
+      if(model.snapControlPoint(t)) {
+       model.joinTracks(t);
+       merges++;
+       trackLength--;
+       i = 0;
+       tracks = model.getAllTracks();
+//			valueText.text = valueText.text + tracks[trackLength-1].trackName;
+        continue;
+      }
+      i++;
+    }
+
+    //	if(merges < maxMerges)
+  	if(model.getAllTracks().length !==1 ) //make sure there is only one track
+  	{
+
+  		valueText.text = "Error ! Tracks must be placed end to end to merge properly !" + model.getAllTracks().length.toFixed(0);
+      valueText.centerX = View.layoutBounds.centerX;
+    
+      resetTracks()
+    /*
+        for(var i=0;i<unmerged_tracks.length;i++)
+        {
+          var track=unmerged_tracks[i];
+          track.interactive=true;
+          model.tracks.add(track);
+        }
+        */
+
+        //Zhilin
+      // var n =0;
+      // var m =0;
+      // while( (n < trackLength ) )
+      // {
+      //   var t1 = tracks[n];
+      //   while((m > n ) && (m < trackLength)){
+      //     var t2 = tracks[m];
+      //     // calculate the overlap
+      //     valueText.text = "x value" + t1.x;
+      //     valueText.centerX = View.layoutBounds.centerX;
+      //     m++;
+      //   }
+      //   n++;
+      // }
+
+
+      return false;
+    }
+    else
+    {
+  		//add flat portion of the track
+  		var track  = model.getAllTracks();
+  		var right = track[0].getRightControlPointXY();
+  		model.tracks.add(model.flatTrack);
+  		model.flatTrack.position = new Vector2(right.x,right.y);
+  		model.flatTrack.updateLinSpace();
+  		model.flatTrack.updateSplines();
+  		model.flatTrack.trigger('scaled');
+  		track[0].updateSplines();
+
+  /*		var cps = track[0].controlPoints;
+  		var x = cps[cps.length-1];
+  		var dist = x.position.distance(model.flatTrack.controlPoints[0].position);
+  		valueText.text = dist.toFixed(2);
+  		valueText.centerX = View.layoutBounds.centerX;*/
+  		
+  		var track  = model.getAllTracks();
+  		var tkNo = (track[1].trackName) == "Flat" ? 0:1;
+  		var rCP = track[0].getRightControlPoint();
+  		rCP.snapTarget = model.flatTrack.controlPoints[0];
+  		if(model.joinTracks(track[0]))
+  		{
+  		}
+  		track  = model.getAllTracks();
+  		rCP = track[0].getRightControlPoint().sourcePosition;
+  		wallImgNodeH.bottom = View.modelViewTransform.modelToViewY(rCP.y)+6;
+  		wallImgNodeH.left = View.modelViewTransform.modelToViewX(rCP.x);
+  		var adj = (model.skater.mass-40)/20*10;
+  		wallImgNodeV.right = wallImgNodeH.right + adj;
+  		wallImgNodeV.bottom = wallImgNodeH.bottom;
+  		return true;
+  	}
+  };
    // Mass Slider
    var massSlider = new ControlSlider (
      "Car Mass",
