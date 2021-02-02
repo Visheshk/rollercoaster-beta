@@ -96,12 +96,6 @@ define( function( require ) {
       //acceleration,forces
       acceleration: new Vector2( 0, 0 ),
 
-      forceList: [],
-      velocityList: [],
-      accelerationList: [],
-      xList: [],
-      yList: [],
-      speedList: [],
       changeList: [],
 
       //normal force
@@ -204,6 +198,16 @@ define( function( require ) {
 
       // Notify the graphics to re-render.  See #223
      this.trigger( 'updated' );
+    },
+
+    resetProperties: function () {
+      this.kineticEnergy = 0;
+      this.potentialEnergy = 0;
+      this.thermalEnergy = 0;
+      this.totalEnergy = 0;
+      this.changeList = [];
+      this.maxA = 0;
+      this.maxU = 0;
     },
 
     // Move the skater to her initial position, but leave the friction and mass the same, see #237

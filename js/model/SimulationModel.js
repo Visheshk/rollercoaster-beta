@@ -216,6 +216,7 @@ return inherit( PropertySet, SimulationModel , {
     PropertySet.prototype.reset.call( this );
     this.mergedTrackCount = 0;
       //this.skater.reset();
+      this.skater.resetProperties();
       this.allTracks.forEach( function(track) {
         track.reset();
       });
@@ -643,7 +644,7 @@ return inherit( PropertySet, SimulationModel , {
     getNormalForce: function( skaterState ) {
       skaterState.getCurvature( this.curvatureTemp2 );
       var radiusOfCurvature = Math.min( this.curvatureTemp2.r, 100000 );
-      const RADIUS_LOWER_END = 4;
+      const RADIUS_LOWER_END = 2.2;
       if (Math.abs(radiusOfCurvature) < RADIUS_LOWER_END) {
         radiusOfCurvature = RADIUS_LOWER_END * Math.sign(radiusOfCurvature);
       }

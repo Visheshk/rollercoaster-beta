@@ -263,31 +263,31 @@ else
 	}
 };
    // Mass Slider
-   var massSlider = new ControlSlider (
-   	"Car Mass",
-   	'kg',
-   	model.skater.massProperty,
-    	 new Range(Constants.MIN_MASS,Constants.MAX_MASS), //range
-    	 function(val){return val;},
-    	 new Property(true),
-    	 {delX:2, decimals:0} );
-   massSlider.scale(0.550);
+  var massSlider = new ControlSlider (
+    "Car Mass",
+    'kg',
+    model.skater.massProperty,
+    new Range(Constants.MIN_MASS,Constants.MAX_MASS), //range
+    function(val){return val;},
+    new Property(true),
+    {delX:2, decimals:0} );
+  massSlider.scale(0.550);
 
    //Friction SLIDER
-   var frictionSlider = new ControlSlider (
-   	"Friction",
-   	'',
-   	model.frictionProperty,
-    	 new Range(0,0.1), //friction range
-    	 function(val){return val;},
-    	 new Property(true),
-    	 {delX:0.01, decimals:2} );
-   frictionSlider.scale(0.550);
+  var frictionSlider = new ControlSlider (
+    "Friction",
+    '',
+    model.frictionProperty,
+    new Range(0,0.1), //friction range
+    function(val){return val;},
+    new Property(true),
+    {delX:0.01, decimals:2} );
+  frictionSlider.scale(0.550);
 
-   var children = [massSlider,frictionSlider];
-   var panelContent = new HBox( { spacing: 15, children: children } );
-   var massFrictionPanel = new Panel(panelContent,{fill:'#F0F0F0',xMargin:10});  
-   View.addChild(massFrictionPanel);
+  var children = [massSlider,frictionSlider];
+  var panelContent = new HBox( { spacing: 15, children: children } );
+  var massFrictionPanel = new Panel(panelContent,{fill:'#F0F0F0',xMargin:10});  
+  View.addChild(massFrictionPanel);
 
   //Adjust heights button 
   var adjHeightsButton = new TextPushButton (  'Adjust Height', {
@@ -531,35 +531,35 @@ model.trackDesignStateProperty.link( function(state) {
     } );
     */
     var disconnectTracks =  function() {
-    	model.simStateProperty.set('design');
-    	model.rollerStateProperty.set('start');
-    	model.trackDesignStateProperty.set('addTrack');
-    	model.skater.maxAProperty.reset();
-    	model.skater.maxAPosProperty.reset();
-		//   	model.skater.reset();
-		model.tracks.clear();
-		model.paused = true;
-		model.mergedTrackCount = 0;
+      model.simStateProperty.set('design');
+      model.rollerStateProperty.set('start');
+      model.trackDesignStateProperty.set('addTrack');
+      model.skater.maxAProperty.reset();
+      model.skater.maxAPosProperty.reset();
+      model.skater.resetProperties();
+      //   	model.skater.reset();
+      model.tracks.clear();
+      model.paused = true;
+      model.mergedTrackCount = 0;
 
-		model.previousTracks.forEach( function(track)
-		{
-			track.interactive=true;
-			model.tracks.add(track);
-		} );
-		model.previousTracks.clear();
-	};
+      model.previousTracks.forEach( function(track)
+      {
+        track.interactive=true;
+        model.tracks.add(track);
+      } );
+      model.previousTracks.clear();
+    };
 
-	var disconnectTracksButton = new TextPushButton ( 'Modify Design', {
-		baseColor: 'rgb(50,50,180)',
-		baseColor: '#f0c911',
-		font: new PhetFont( 12 ),
-		//      textFill: 'white',
-		xMargin: 5,
-		listener: disconnectTracks,
-	} );
+    var disconnectTracksButton = new TextPushButton ( 'Modify Design', {
+      baseColor: 'rgb(50,50,180)',
+      baseColor: '#f0c911',
+      font: new PhetFont( 12 ),
+    //      textFill: 'white',
+    xMargin: 5,
+    listener: disconnectTracks,
+    } );
 
-	var playbackSpeedControl = new PlaybackSpeedControl(model.speedProperty);
-
+    var playbackSpeedControl = new PlaybackSpeedControl(model.speedProperty);
     // Make the step button the same size as the pause button.
     stepButton.mutate( {scale: playPauseButton.height / stepButton.height} );
     model.property( 'paused' ).linkAttribute( stepButton, 'enabled' );
@@ -573,20 +573,20 @@ model.trackDesignStateProperty.link( function(state) {
     var simControlPanel = new Panel(simControlNode,{xMargin: 10, yMargin: 5, fill: '#F0F0F0', lineWidth: 1});
     View.addChild(simControlPanel);
 
-    //positioning
-	//    restartSkaterButton.left = stepButton.right + 10;
-	restartSkaterText.centerX = restartSkaterButton.centerX;
-	restartSkaterText.top = restartSkaterButton.bottom + 5;    
-	playPauseButton.left = restartSkaterButton.right + 15;
-	playPauseButton.centerY = restartSkaterButton.centerY;
-	stepButton.left = playPauseButton.right + 15;
-	stepButton.centerY = playPauseButton.centerY;
-	playbackSpeedControl.left = stepButton.right+15;
-	playbackSpeedControl.centerY = stepButton.centerY;
-	simControlPanel.centerX = View.layoutBounds.centerX;
-	simControlPanel.top = View.layoutBounds.top + 5;
-	disconnectTracksButton.right = simControlPanel.left - 10;
-	disconnectTracksButton.centerY = simControlPanel.centerY;
+      //positioning
+  	//    restartSkaterButton.left = stepButton.right + 10;
+  	restartSkaterText.centerX = restartSkaterButton.centerX;
+  	restartSkaterText.top = restartSkaterButton.bottom + 5;    
+  	playPauseButton.left = restartSkaterButton.right + 15;
+  	playPauseButton.centerY = restartSkaterButton.centerY;
+  	stepButton.left = playPauseButton.right + 15;
+  	stepButton.centerY = playPauseButton.centerY;
+  	playbackSpeedControl.left = stepButton.right+15;
+  	playbackSpeedControl.centerY = stepButton.centerY;
+  	simControlPanel.centerX = View.layoutBounds.centerX;
+  	simControlPanel.top = View.layoutBounds.top + 5;
+  	disconnectTracksButton.right = simControlPanel.left - 10;
+  	disconnectTracksButton.centerY = simControlPanel.centerY;
 
 /*
     // Add the buttons directly to the view for easier positioning
