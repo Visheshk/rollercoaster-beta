@@ -435,20 +435,20 @@ var options = {boxWidth: 18};
     var accChkBox = new CheckBox( new HBox( {children: pad(accFlagSet)} ), model.accFlagVisibleProperty , options );
 
     var checkBoxChildren = [
-    gridChkBox,
+    // gridChkBox,
     vectorsChkBox,
-    speedChkBox,
-    accChkBox
+    // speedChkBox,
+    // accChkBox
     ];
     var checkBoxes = new VBox( {align: 'left', spacing: 4, children: checkBoxChildren} );
     View.addChild(checkBoxes);
 
-//Positioning of Buttons & Checkboxes
+    //Positioning of Buttons & Checkboxes
 
-buttons.addChild(adjHeightsButton);
-//    buttons.addChild(adjFrictionButton);
-buttons.addChild(adjWidthButton);
-buttons.addChild(mergeTracksButton);
+    buttons.addChild(adjHeightsButton);
+    //    buttons.addChild(adjFrictionButton);
+    buttons.addChild(adjWidthButton);
+    buttons.addChild(mergeTracksButton);
     //Zhilin
     View.addChild(exportButton);
     View.addChild(doneButton);
