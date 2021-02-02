@@ -67,7 +67,7 @@ function SimulationModel() {
     barGraphVisible: false,
     gridVisible: false,
     speedometerVisible: false,
-    vectorsVisible: false,
+    vectorsVisible: true,
 
     // Enabled/disabled for the track editing buttons
     editButtonEnabled: false,
