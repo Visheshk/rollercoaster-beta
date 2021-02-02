@@ -54,6 +54,7 @@ define( function( require ) {
       gravity: -9.8,
 
       position: new Vector2( 3.5, 0 ),
+      trackEndX : 100,
 
       // Start in the middle of the MassSlider range
       mass: Constants.DEFAULT_MASS,

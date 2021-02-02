@@ -91,12 +91,17 @@ var resetTracks = function () {
 	model.mergedTrackCount = 0;
 }
 
-var getLeftX = function(track) {
+var getLeftX = function(track, right = -1) {
 	var xs = [];
 	for (var c in track.controlPoints) {
 		xs.push(track.controlPoints[c].position.x);
 	}
-	return Math.min(...xs);
+  if (right == -1) {
+  	return Math.min(...xs);
+  }
+  else {
+    return Math.max(...xs);
+  }
 }
 
 //Function to merge the tracks
@@ -107,19 +112,24 @@ var mergeTracks = function() {
   //model.previousTracks = tracks;
   var xDiffs = []
   var leftXs = [];
+  var lastX = 0;
   
   model.tracks.forEach( function(track) {
   	model.previousTracks.add(track);
     //given when new min X comes in, append to list od 
 
     var newX = getLeftX(track);
+    var rx = getLeftX(track, 1)
+    if (rx > lastX) {
+      lastX = rx;
+    }
     console.log(newX);
     for (var x in leftXs){
       xDiffs.push(Math.abs(newX - leftXs[x]));  //find x difference between the new leftControlPoint and pre existing track's left points
-  }
-  console.log(xDiffs);
+    }  
+    console.log(xDiffs);
     leftXs.push(newX); // append leftMost position of track's controlpoint to existing list of tracks
-} );
+  } );
 
   if (Math.min(...xDiffs) < 1.5) {
   	valueText.text = "Tracks are overlapping! Move them to avoid issues";
@@ -139,6 +149,9 @@ var mergeTracks = function() {
   	valueText.centerX = View.layoutBounds.centerX;
   	return false;
   }
+  console.log(lastX);
+  model.skater.trackEndX = lastX;
+
 	// if snapTarget is intact
 	while( (i < trackLength ) && ( merges < maxMerges ) ) {
 		track = tracks[i];

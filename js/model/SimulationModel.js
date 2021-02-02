@@ -231,6 +231,8 @@ return inherit( PropertySet, SimulationModel , {
       var result = this.stepModel( dt, skaterState );
       result.setToSkater( this.skater );
       this.skater.trigger( 'updated' );
+
+      // console.log(this.model.lastX);
     },
     // Step the model, automatically called from Joist
     step: function( dt ) {
@@ -722,7 +724,7 @@ return inherit( PropertySet, SimulationModel , {
       // choose velocity by using the unit parallel vector to the track
       var newState = skaterState.updateUUDVelocityPosition( u, uD, newVelocityX, newVelocityY, newPointX, newPointY );
       var changeLog = {"time": dt, "normalForceX": this.skater.normalForce.x, "normalForceY": this.skater.normalForce.y, "u": u, "x": newPointX, "y": newPointY, "speed": spd, "velX": newVelocityX, "velY": newVelocityY};
-      this.skater.changeList.push(changeLog);
+      // this.skater.changeList.push(changeLog);
 
       if ( this.friction > 0 ) {
 
@@ -824,8 +826,10 @@ return inherit( PropertySet, SimulationModel , {
           newState = this.stepEuler( dt / numDivisions, newState );
         }
 
+
         // Correct energy
         var correctedState = this.correctEnergy( skaterState, newState );
+        // if skaterState.positionX = model.
 
         // Check whether the skater has left the track
         if ( skaterState.track.isParameterInBounds( correctedState.u ) ) {
@@ -1057,6 +1061,13 @@ return inherit( PropertySet, SimulationModel , {
     // Update the skater based on which state it is in
     stepModel: function( dt, skaterState ) {
       this.time += dt;
+      // console.log(this);
+      // console.log();
+      if  (this.skater.position.x > (this.skater.trackEndX - 0.4)) {
+        // console.log("end")
+        this.skater.track.friction = 0.1;
+        console.log(this.skater.track.frictionProperty);
+      }
       return skaterState.dragging ? skaterState : // User is dragging the skater, nothing to update here
       !skaterState.track && skaterState.positionY <= 0 ? this.stepGround( dt, skaterState ) :
       !skaterState.track && skaterState.positionY > 0 ? this.stepFreeFall( dt, skaterState, false ) :
