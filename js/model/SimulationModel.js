@@ -724,7 +724,9 @@ return inherit( PropertySet, SimulationModel , {
       // choose velocity by using the unit parallel vector to the track
       var newState = skaterState.updateUUDVelocityPosition( u, uD, newVelocityX, newVelocityY, newPointX, newPointY );
       var changeLog = {"time": dt, "normalForceX": this.skater.normalForce.x, "normalForceY": this.skater.normalForce.y, "u": u, "x": newPointX, "y": newPointY, "speed": spd, "velX": newVelocityX, "velY": newVelocityY};
-      // this.skater.changeList.push(changeLog);
+      if (this.skater.changeList.length < 100000){
+        this.skater.changeList.push(changeLog);
+      }
 
       if ( this.friction > 0 ) {
 
@@ -1066,7 +1068,7 @@ return inherit( PropertySet, SimulationModel , {
       if  (this.skater.position.x > (this.skater.trackEndX - 0.4)) {
         // console.log("end")
         this.skater.track.friction = 0.1;
-        console.log(this.skater.track.frictionProperty);
+        // console.log(this.skater.track.frictionProperty);
       }
       return skaterState.dragging ? skaterState : // User is dragging the skater, nothing to update here
       !skaterState.track && skaterState.positionY <= 0 ? this.stepGround( dt, skaterState ) :

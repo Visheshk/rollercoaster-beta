@@ -72,8 +72,8 @@ define( function( require ) {
     //Function that creates a Width slider
 
     var addWidthSlider = function (track) {
-            var trackWidth = track.getRightControlPointX() - track.getLeftControlPointX();
-            var hScale = track.hScaleProperty.get();
+      var trackWidth = track.getRightControlPointX() - track.getLeftControlPointX();
+      var hScale = track.hScaleProperty.get();
 	    var trackSlider = new ControlSlider ( 
 	    	track.trackName + " Length",
 	    	 'm',

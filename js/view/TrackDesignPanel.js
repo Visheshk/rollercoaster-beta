@@ -108,6 +108,7 @@ var getLeftX = function(track, right = -1) {
 var mergeTracks = function() {
 	var unmerged_tracks = model.getAllTracks() ;
 	var tracks = model.getAllTracks();
+  model.skater.changeList = [];
   //store the unmerged tracks
   //model.previousTracks = tracks;
   var xDiffs = []
@@ -386,6 +387,18 @@ var exportButton = new TextPushButton (  'Export Data', {
 	textFill: 'white',
 	xMargin: 10,
 	listener: function() {
+    // console.log(model.skater.changeList);  
+    var savecsv = function (temp1) {
+      let csvContent = Object.keys(temp1[0]).join(",") + "\n" + temp1.map(e => Object.values(e).join(",")).join("\n");
+      var blob = new Blob([csvContent], { type: 'text/csv' });
+      var link = window.document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = link.href.split('/').pop() + '.csv'; 
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    savecsv(model.skater.changeList)
 
       //  model.trackDesignStateProperty.set('merge');
       //  if(mergeTracks())
@@ -435,7 +448,7 @@ var options = {boxWidth: 18};
     var accChkBox = new CheckBox( new HBox( {children: pad(accFlagSet)} ), model.accFlagVisibleProperty , options );
 
     var checkBoxChildren = [
-    // gridChkBox,
+    gridChkBox,
     vectorsChkBox,
     // speedChkBox,
     // accChkBox
@@ -526,7 +539,7 @@ model.trackDesignStateProperty.link( function(state) {
     	model.rollerState = 'start';
     	model.manualStep();
     	
-    	console.log(model.skater.changeList);
+    	// console.log(model.skater.changeList);
 
     	model.skater.changeList = [];
     }
@@ -550,6 +563,7 @@ model.trackDesignStateProperty.link( function(state) {
       model.skater.maxAProperty.reset();
       model.skater.maxAPosProperty.reset();
       model.skater.resetProperties();
+      model.skater.changeList = [];
       //   	model.skater.reset();
       model.tracks.clear();
       model.paused = true;
